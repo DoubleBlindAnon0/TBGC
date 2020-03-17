@@ -6,7 +6,8 @@ Authors
 import numpy as np
 import networkx as nx
 
-def generate_G3(c=6):
+
+def generate_G3(c=6, intra_cluster_prob=0.9, inter_cluster_prob=0.1):
     """Generate G3 toy graph.
 
     Parameters
@@ -16,19 +17,19 @@ def generate_G3(c=6):
 
     Returns
     ----------
-    G_M, M, L_M, G_O, O, L_O, vertex_labels
+    G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels
     """
     # Generating G3_M as a graph with 3 vertices "a", "b" and "c" and 2 edges, "ab"
     # and "bc"
     k = 3  # b = number of vertices in the model graph
     if type(c) == int:
         c = np.repeat([c], k)  # c = list of number of vertices per community
-    M = np.array(
+    A_M = np.array(
         [[c[0] * 2 * 0.9, c[0] * 0.1 + c[1] * 0.1, 0],
          [c[0] * 0.1 + c[1] * 0.1, c[1] * 2 * 0.9, c[1] * 0.1 + c[2] * 0.1],
          [0, c[1] * 0.1 + c[2] * 0.1, c[2] * 2 * 0.9]]
     )
-    G_M = nx.Graph(M)
+    G_M = nx.Graph(A_M)
     L_M = nx.laplacian_matrix(G_M).todense()
 
     # Generating G_O as a graph with three communities "A", "B", and "C" with 30
@@ -56,13 +57,13 @@ def generate_G3(c=6):
             if p <= val:
                 block_matrix[row][col] = 1
     G_O = nx.from_numpy_matrix(block_matrix)
-    O = nx.to_numpy_matrix(G_O)
+    A_O = nx.to_numpy_matrix(G_O)
     L_O = nx.laplacian_matrix(G_O).todense()
 
-    return G_M, M, L_M, G_O, O, L_O, vertex_labels
+    return G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels
 
 
-def generate_G6(c=6):
+def generate_G6(c=6, intra_cluster_prob=0.9, inter_cluster_prob=0.1):
     """Generate G6 toy graph.
   
     Parameters
@@ -72,14 +73,14 @@ def generate_G6(c=6):
   
     Returns
     ----------
-    G_M, M, L_M, G_O, O, L_O, vertex_labels
+    G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels
     """
     k = 6  # k = number of vertices in the model graph
     # Generating G_M as a graph with 5 vertices "a-e" and 6 edges, "ab", "bc", "bd",
     # "cd", "ce", "ef"
     if type(c) == int:
         c = np.repeat([c], k)
-    M = np.array(
+    A_M = np.array(
         [[c[0] * 2 * 0.9, c[0] * 0.1 + c[1] * 0.1, 0, 0, 0, 0],
          [c[0] * 0.1 + c[1] * 0.1, c[1] * 2 * 0.7, c[1] * 0.1 + c[2] * 0.1, c[1] * 0.1 + c[3] * 0.1, 0, 0],
          [0, c[1] * 0.1 + c[2] * 0.1, c[2] * 2 * 0.7, c[2] * 0.1 + c[3] * 0.1, c[2] * 0.1 + c[4] * 0.1, 0],
@@ -87,7 +88,7 @@ def generate_G6(c=6):
          [0, 0, c[2] * 0.1 + c[4] * 0.1, 0, c[4] * 2 * 0.8, c[4] * 0.1 + c[5] * 0.1],
          [0, 0, 0, 0, c[4] * 0.1 + c[5] * 0.1, c[5] * 2 * 0.8]]
     )
-    G_M = nx.Graph(M)
+    G_M = nx.Graph(A_M)
     L_M = nx.laplacian_matrix(G_M).todense()
 
     # Generating G_O as a graph of five communities
@@ -118,10 +119,10 @@ def generate_G6(c=6):
             if p <= val:
                 block_matrix[row][col] = 1
     G_O = nx.from_numpy_matrix(block_matrix)
-    O = nx.to_numpy_matrix(G_O)
+    A_O = nx.to_numpy_matrix(G_O)
     L_O = nx.laplacian_matrix(G_O).todense()
 
-    return G_M, M, L_M, G_O, O, L_O, vertex_labels
+    return G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels
 
 
 def generate_C2(c=6, intra_cluster_prob=0.48, inter_cluster_prob=0.42):
@@ -140,13 +141,13 @@ def generate_C2(c=6, intra_cluster_prob=0.48, inter_cluster_prob=0.42):
 
     Returns
     ----------
-    G_M, M, L_M, G_O, O, L_O, vertex_labels
+    G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels
     """
     # Generating G_M as a graph with 4 vertices "a-d" and 3 edges, "ab", "bc", "cd"
     k = 4  # k = number of vertices in the model graph
     if type(c) == int:
         c = np.repeat([c], k)
-    M = np.array(
+    A_M = np.array(
         [[c[0] * 2 * 0.9, c[1] * 0.1 + c[2] * 0.1, 0, 0],
          [c[1] * 0.1 + c[2] * 0.1, c[1] * 2 * intra_cluster_prob, c[2] * inter_cluster_prob + c[3] * inter_cluster_prob,
           0],
@@ -154,7 +155,7 @@ def generate_C2(c=6, intra_cluster_prob=0.48, inter_cluster_prob=0.42):
           c[2] * 0.1 + c[3] * 0.1],
          [0, 0, c[2] * 0.1 + c[3] * 0.1, c[3] * 2 * 0.9]]
     )
-    G_M = nx.Graph(M)
+    G_M = nx.Graph(A_M)
     L_M = nx.laplacian_matrix(G_M).todense()
 
     # Generating G_O as a graph of five communities
@@ -185,10 +186,10 @@ def generate_C2(c=6, intra_cluster_prob=0.48, inter_cluster_prob=0.42):
             if p <= val:
                 block_matrix[row][col] = 1
     G_O = nx.from_numpy_matrix(block_matrix)
-    O = nx.to_numpy_matrix(G_O)
+    A_O = nx.to_numpy_matrix(G_O)
     L_O = nx.laplacian_matrix(G_O).todense()
 
-    return G_M, M, L_M, G_O, O, L_O, vertex_labels
+    return G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels
 
 
 def generate_bp(c=6, intra_cluster_prob=0.5, inter_cluster_prob=0.5):
@@ -196,44 +197,46 @@ def generate_bp(c=6, intra_cluster_prob=0.5, inter_cluster_prob=0.5):
 
     Parameters
     ----------
+    intra_cluster_prob : float
+      Probability that any two nodes in the first community are connected
     c : int or list of ints
       Number of nodes in each community/cluster. If `int`, assume all nodes are equal size.
     inter_cluster_prob : float
-      Probability that any two nodes in the distinct communities is connected
+      Probability that any two nodes in the distinct communities are connected
 
     Returns
     ----------
-    G_M, M, L_M, G_O, O, L_O, vertex_labels
+    G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels
     """
     k = 2  # k = number of vertices in the model graph
     if type(c) == int:
         c = np.repeat([c], k)  # c = list of number of vertices per community
-    M = np.array(
+    A_M = np.array(
         [[c[0] * 2 * intra_cluster_prob, np.sum(c) * 2 * inter_cluster_prob],
          [np.sum(c) * 2 * inter_cluster_prob, 0]]
     )
-    G_M = nx.Graph(M)
+    G_M = nx.Graph(A_M)
     L_M = nx.laplacian_matrix(G_M).todense()
 
     # Generating G_O as a bipartite graph
     n = np.sum(c)  # n = number of vertices in the observation graph
     block_matrix_shape = (n, n)
-    O = np.zeros(block_matrix_shape, dtype=int)
+    A_O = np.zeros(block_matrix_shape, dtype=int)
     vertex_labels = np.repeat(np.arange(k), c)
 
-    for row, _row in enumerate(O):
-        for col, _col in enumerate(O[:row]):
+    for row, _row in enumerate(A_O):
+        for col, _col in enumerate(A_O[:row]):
             # If different communities:
-            if row < c[0] and col >= c[0] or row >= c[0] and col < c[0]:
+            if row < c[0] <= col or row >= c[0] > col:
                 if np.random.random() < inter_cluster_prob:
-                    O[row, col] = 1
-                    O[col, row] = 1
+                    A_O[row, col] = 1
+                    A_O[col, row] = 1
             # If first community:
             if row < c[0] and col < c[0]:
                 if np.random.random() < intra_cluster_prob:
-                    O[row, col] = 1
-                    O[col, row] = 1
-    G_O = nx.from_numpy_matrix(O)
+                    A_O[row, col] = 1
+                    A_O[col, row] = 1
+    G_O = nx.from_numpy_matrix(A_O)
     L_O = nx.laplacian_matrix(G_O).todense()
 
-    return G_M, M, L_M, G_O, O, L_O, vertex_labels
+    return G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels

@@ -839,7 +839,7 @@ class SpectralClustering(BaseEstimator, ClusterMixin):
 
 
 # PUBLIC FUNCTIONS
-def cluster_spectral(A_M, A_O, k):
+def cluster_spectral(A_M, A_O):
     """Performs baseline spectral clustering.
     Parameters
     ---------
@@ -853,7 +853,7 @@ def cluster_spectral(A_M, A_O, k):
       P
       time"""
     spectral_start_time = time()
-    spectral_cluster = SpectralClustering(k, affinity="precomputed").fit(A_O)
+    spectral_cluster = SpectralClustering(A_M.shape[0], affinity="precomputed").fit(A_O)
     spectral_prediction = spectral_cluster.labels_
     P_opt_spectral = spectral_cluster.eigenvs_
     spectral_time = time() - spectral_start_time
@@ -861,7 +861,7 @@ def cluster_spectral(A_M, A_O, k):
     return spectral_prediction, P_opt_spectral, spectral_time
 
 
-def cluster_template(A_M, A_O, k, mode="adjacency", cost_function=compute_matching_norm):
+def cluster_template(A_M, A_O, mode="adjacency", cost_function=compute_matching_norm):
     """Performs baseline spectral clustering.
     Parameters
     ---------
@@ -869,8 +869,6 @@ def cluster_template(A_M, A_O, k, mode="adjacency", cost_function=compute_matchi
         Adjacency matrix of model
     A_O : `ndarray
         Adjacency matrix of observation
-    k : `int`
-        cluster total
     mode : {"adjacency", "laplacian"}
         Mode of the template-based clustering
     Returns
@@ -891,14 +889,14 @@ def cluster_template(A_M, A_O, k, mode="adjacency", cost_function=compute_matchi
         P_opt_template = find_optimal_P(A_M, A_O, manifold_P, cost=cost_function)
     elif mode=="laplacian":
         P_opt_template = find_optimal_P(L_M, L_O, manifold_P, cost=cost_function)
-    template_kmeans = get_kmeans(P_opt_template, k)
+    template_kmeans = get_kmeans(P_opt_template, A_M.shape[0])
     template_prediction = template_kmeans.predict(P_opt_template)
     template_time = time() - template_start_time
 
     return template_prediction, P_opt_template, template_time
 
 
-def cluster_modularity(A_M, A_O, k):
+def cluster_modularity(A_M, A_O):
     G_O = nx.from_numpy_matrix(A_O)
     modularity_start_time = time()
     modularity_communities = nx.algorithms.community.modularity_max.greedy_modularity_communities(G_O)

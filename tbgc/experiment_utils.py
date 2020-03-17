@@ -13,7 +13,7 @@ from clustering_techniques import cluster_template, cluster_spectral, cluster_mo
 from clustering_techniques import compute_matching_norm
 
 
-def run_iteration(generator_function: Callable, generator_args: Sequence, cost_function: Callable=compute_matching_norm) -> dict:
+def run_iteration(generator_function: Callable, generator_args: Sequence, cost_function: Callable = compute_matching_norm, random_state = None) -> dict:
     """Generates a graph using the specified function and arguments, realizes all clusterings and compute metrics.
 
     Parameters
@@ -32,6 +32,10 @@ def run_iteration(generator_function: Callable, generator_args: Sequence, cost_f
     measures : dict
         Dictionary containing each technique's measures, organized as `[technique_name][measure]`.
     """
+    # Initializing random state if specified
+    if random_state is not None:
+        np.random.seed(random_state)
+
     # Generate graph
     G_M, A_M, L_M, G_O, A_O, L_O, vertex_labels = generator_function(*generator_args)
     # Computing ground-truth P from vertex labels
