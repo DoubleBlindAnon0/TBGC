@@ -1,6 +1,7 @@
 """Runs the Bipartite and Hub Comparison experiment."""
 import json
 from multiprocessing import Pool
+
 from tqdm import tqdm
 
 from clustering_techniques import compute_matching_norm
@@ -24,7 +25,7 @@ if __name__ == '__main__':
     for graph_name, intra_cluster_prob in graphs:
         for inter_cluster_prob in inter_cluster_probs:
             for c in cs:
-                print("Experiment on {}, with c={}, at intra_cluster_prob={}".format(graph_name, c, intra_cluster_prob))
+                print("Experiment on {}, with c={}, at inter_cluster_prob={}".format(graph_name, c, inter_cluster_prob))
 
                 experiment_measures = {"template_adj": {"ari": [], "projector_distance": [], "time": []},
                                        "template_lap": {"ari": [], "projector_distance": [], "time": []},
@@ -39,7 +40,7 @@ if __name__ == '__main__':
                             for measure in ["ari", "projector_distance", "time"]:
                                 experiment_measures[method][measure].append(iteration_measures[method][measure])
 
-                results[graph_name][c][intra_cluster_prob*100] = experiment_measures
+                results[graph_name][c][inter_cluster_prob*100] = experiment_measures
 
     with open("bp_results.json", "w") as fp:
         json.dump(results, fp, indent=2)

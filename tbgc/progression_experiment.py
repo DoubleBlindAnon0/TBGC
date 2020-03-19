@@ -1,6 +1,7 @@
 """Runs the C2 Difficulty Progression experiment."""
 import json
 from multiprocessing import Pool
+
 from tqdm import tqdm
 
 from clustering_techniques import compute_matching_norm
