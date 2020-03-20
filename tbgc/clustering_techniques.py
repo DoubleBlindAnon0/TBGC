@@ -881,8 +881,10 @@ def cluster_template(A_M, A_O, mode="adjacency", cost_function=compute_matching_
     manifold_P = Stiefel(A_O.shape[0], A_M.shape[0])
 
     # Computing laplacians
-    L_M = nx.laplacian_matrix(nx.from_numpy_matrix(A_M)).toarray()
-    L_O = nx.laplacian_matrix(nx.from_numpy_matrix(A_O)).toarray()
+    #L_M = nx.laplacian_matrix(nx.from_numpy_matrix(A_M)).toarray()
+    L_M = csgraph_laplacian(A_M)
+    #L_O = nx.laplacian_matrix(nx.from_numpy_matrix(A_O)).toarray()
+    L_O = csgraph_laplacian(A_O)
 
     template_start_time = time()
     if mode=="adjacency":
