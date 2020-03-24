@@ -78,7 +78,7 @@ def load_dbpl_dataset(cut=None):
     return None, A_M, None, None, A_O, None, vertex_labels
 
 
-def process_loaded_graph(loaded_graph, dict_of_labels, cut=None):
+def process_loaded_graph(loaded_graph, dict_of_labels, cut=None, return_connected=True):
     # Cutting nodes
     allowed_nodes, cut_nodes = [], []
     if cut is not None:
@@ -93,18 +93,21 @@ def process_loaded_graph(loaded_graph, dict_of_labels, cut=None):
         for cut_node in cut_nodes:
             del dict_of_labels[cut_node]
 
+    # Cutting to connected component
+    if return_connected:
+        ccs = list(nx.connected_components(loaded_graph))
+        if len(ccs) > 1:
+          out_of_cc = list(set().union(*(ccs[1:])))
+          loaded_graph.remove_nodes_from(out_of_cc)
+          for i in out_of_cc:
+              del dict_of_labels[int(i)]
+
     # 'Compressing' the graph nodes
-    node_conversion_dict = {}
-    for i, node in enumerate(loaded_graph):
-        node_conversion_dict[node] = i
+    node_conversion_dict = { node : i for i, node in enumerate(loaded_graph)}
 
-    compressed_list_of_tuples = []
-    for node in loaded_graph:
-        for neighbor in nx.neighbors(loaded_graph, node):
-            compressed_list_of_tuples.append((node_conversion_dict[node],node_conversion_dict[neighbor]))
-    compressed_graph = nx.Graph(compressed_list_of_tuples)
+    compressed_graph = nx.relabel_nodes(loaded_graph, node_conversion_dict, copy=True)
 
-    label_compression_dict = {v:k for k,v in dict(enumerate(np.unique(list(dict_of_labels.values())))).items()}
+    label_compression_dict = {v:k for k,v in enumerate(np.unique(list(dict_of_labels.values())))}
     compressed_labels = [label_compression_dict[dict_of_labels[node]] for node in loaded_graph]
 
     # Building observation graph matrix
@@ -121,4 +124,4 @@ def process_loaded_graph(loaded_graph, dict_of_labels, cut=None):
 
 
 if __name__ == '__main__':
-    o, m, l = load_dbpl_dataset(cut=30000)
+    _, m, _, _, o, _, l = load_email_dataset(cut=30000)
