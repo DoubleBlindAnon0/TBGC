@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from clustering_techniques import compute_matching_norm
 from experiment_utils import run_iteration
-from real_datasets import load_email_dataset, load_dbpl_dataset
+from real_datasets import load_email_dataset, load_dbpl_dataset, load_custom_dbpl_dataset
 
 
 def pooled_iteration_function(iteration):
@@ -15,8 +15,8 @@ def pooled_iteration_function(iteration):
 
 if __name__ == '__main__':
     # Experiment parameters
-    graphs = list(zip(["email", "DBPL"], [load_email_dataset, load_dbpl_dataset]))
-    range_of_iterations = range(16)
+    graphs = list(zip(["email", "DBPL"], [load_email_dataset, load_custom_dbpl_dataset]))
+    range_of_iterations = range(40)
 
     # Experiment results dict
     results = {}
@@ -29,7 +29,7 @@ if __name__ == '__main__':
                                "spectral": {"ari": [], "projector_distance": [], "time": []},
                                "modularity": {"ari": [], "projector_distance": [], "time": []}}
 
-        with Pool(8) as pool:
+        with Pool(20) as pool:
             iteration_measures_list = list(tqdm(pool.imap(pooled_iteration_function, range_of_iterations), total=len(range_of_iterations)))
             #for iteration in tqdm(range_of_iterations):
             #    iteration_measures = run_iteration(graph_function, (c,), random_state=iteration)
