@@ -39,7 +39,6 @@ def load_email_dataset(cut=None, sparse=False):
     return None, A_M, None, None, A_O, None, vertex_labels
 
 
-
 def load_dbpl_dataset(cut=None):
     """Loads the dbpl dataset and its base communities"""
     # Checking if present, downloading if not
@@ -72,6 +71,27 @@ def load_dbpl_dataset(cut=None):
             dict_of_labels[node]
         except KeyError:
             dict_of_labels[node] = last_community
+
+    A_M, A_O, vertex_labels = process_loaded_graph(loaded_graph, dict_of_labels, cut)
+
+    return None, A_M, None, None, A_O, None, vertex_labels
+
+
+def load_custom_dbpl_dataset(cut=None):
+    """Loads the dbpl dataset and its base communities"""
+    # Reading graph
+    # dbpl cutom is stored as a set of edges, with no lines header, space-delimited and a trailing newline
+    with open("data_custom/com-dblp.38cut.ungraph.txt") as fp:
+        loaded_lines = fp.readlines()
+    list_of_tuples = [tuple(map(int, line.strip().split(" "))) for line in loaded_lines[4:]]
+    loaded_graph = nx.Graph(list_of_tuples)
+
+    # Reading labels
+    # dbpl cmty is stored as a set of communities, each line is "<node1>\t<node2>\t<node3>...\n"
+    with open("data_custom/com-dblp.38cut.cmty.txt") as fp:
+        loaded_lines = fp.readlines()
+    list_of_tuples = [tuple(map(int, line.strip().split(" "))) for line in loaded_lines]
+    dict_of_labels = dict(list_of_tuples)
 
     A_M, A_O, vertex_labels = process_loaded_graph(loaded_graph, dict_of_labels, cut)
 
@@ -124,4 +144,4 @@ def process_loaded_graph(loaded_graph, dict_of_labels, cut=None, return_connecte
 
 
 if __name__ == '__main__':
-    _, m, _, _, o, _, l = load_dbpl_dataset(cut=10000)
+    _, m, _, _, o, _, l = load_custom_dbpl_dataset(cut=None)
