@@ -107,8 +107,7 @@ def plot_progression_results():
             plt.tight_layout()
             plt.savefig("progression_{}_{}.eps".format(cluster_size, measure))
 
-
-if __name__ == '__main__':
+def plot_bp_results():
     inter_cluster_probabilities = ["80", "75", "70", "65", "60", "55", "50", "45", "40"]
     inter_cluster_probabilities_print = ["80%", "75%", "70%", "65%", "60%", "55%", "50%", "45%", "40%"]
     measures = ["ari", "projector_distance", "time"]
@@ -161,3 +160,33 @@ if __name__ == '__main__':
 
                 plt.tight_layout()
                 plt.savefig("bipartite_{}_{}_{}.eps".format(graph_name, cluster_size, measure))
+
+
+if __name__ == '__main__':
+    measures = ["ari", "projector_distance", "time"]
+    techniques = ["template_adj", "template_lap", "spectral", "modularity"]
+    technique_printables = ["Adjacency TB", "Laplacian TB", "Spectral", "Modularity"]
+    graphs = ["email", "DBPL"]
+
+    with open("real_results.json") as fp:
+        results_dict = json.load(fp)
+
+    # REAL TABLE SCHEMA: header is dataset, metric, each technique; multi line for datasets
+    print(" & ".join(["Dataset name", "Metric"] + technique_printables) + "\\\\\n\\hline")
+    for graph in graphs:
+        print("\\multirow{"+str(len(measures))+"}{*}{"+graph+"} & ", end="")
+        for measure in measures:
+            if measure != "ari":
+                print(" & ", end="")
+            if measure == "ari": measure_print = "ARI"
+            if measure == "projector_distance": measure_print = "Projector Distance"
+            if measure == "time": measure_print = "Time"
+            print(measure_print, end="")
+
+            for technique in techniques:
+                if technique == "modularity" and measure == "projector_distance":
+                    print(" & N/A", end="")
+                    continue
+                measure_list = results_dict[graph][technique][measure]
+                print(" & ${:.04f} \\pm {:.04f}$".format(np.mean(measure_list), np.std(measure_list)), end="")
+            print("\\\\")

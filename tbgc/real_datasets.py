@@ -124,4 +124,4 @@ def process_loaded_graph(loaded_graph, dict_of_labels, cut=None, return_connecte
 
 
 if __name__ == '__main__':
-    _, m, _, _, o, _, l = load_email_dataset(cut=30000)
+    _, m, _, _, o, _, l = load_dbpl_dataset(cut=10000)
