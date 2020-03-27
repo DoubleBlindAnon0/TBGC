@@ -15,7 +15,7 @@ def pooled_iteration_function(iteration):
 
 if __name__ == '__main__':
     # Experiment parameters
-    graphs = list(zip(["email", "DBPL"], [load_email_dataset, load_custom_dbpl_dataset]))
+    graphs = list(zip(["DBPL"], [load_custom_dbpl_dataset]))
     range_of_iterations = range(40)
 
     # Experiment results dict
@@ -42,5 +42,5 @@ if __name__ == '__main__':
 
         results[graph_name] = experiment_measures
 
-    with open("real_results.json", "w") as fp:
+    with open("real_results2.json", "w") as fp:
         json.dump(results, fp, indent=2)
