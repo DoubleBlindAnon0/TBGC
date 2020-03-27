@@ -81,14 +81,14 @@ def load_custom_dbpl_dataset(cut=None):
     """Loads the dbpl dataset and its base communities"""
     # Reading graph
     # dbpl cutom is stored as a set of edges, with no lines header, space-delimited and a trailing newline
-    with open("data_custom/com-dblp.38cut.ungraph.txt") as fp:
+    with open("data_custom/com-dblp.8cut.ungraph.txt") as fp:
         loaded_lines = fp.readlines()
     list_of_tuples = [tuple(map(int, line.strip().split(" "))) for line in loaded_lines[4:]]
     loaded_graph = nx.Graph(list_of_tuples)
 
     # Reading labels
     # dbpl cmty is stored as a set of communities, each line is "<node1>\t<node2>\t<node3>...\n"
-    with open("data_custom/com-dblp.38cut.cmty.txt") as fp:
+    with open("data_custom/com-dblp.8cut.cmty.txt") as fp:
         loaded_lines = fp.readlines()
     list_of_tuples = [tuple(map(int, line.strip().split(" "))) for line in loaded_lines]
     dict_of_labels = dict(list_of_tuples)
