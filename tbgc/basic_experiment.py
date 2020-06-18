@@ -28,8 +28,11 @@ if __name__ == '__main__':
 
             experiment_measures = {"template_adj": {"ari": [], "projector_distance": [], "time": []},
                                    "template_lap": {"ari": [], "projector_distance": [], "time": []},
+                                   "template_sto": {"ari": [], "projector_distance": [], "time": []},
+                                   "template_stok": {"ari": [], "projector_distance": [], "time": []},
                                    "spectral": {"ari": [], "projector_distance": [], "time": []},
-                                   "modularity": {"ari": [], "projector_distance": [], "time": []}}
+                                   "modularity": {"ari": [], "projector_distance": [], "time": []},
+                                   "modularity_louv": {"ari": [], "projector_distance": [], "time": []}}
 
             with Pool(8) as pool:
                 iteration_measures_list = list(tqdm(pool.imap(pooled_iteration_function, range_of_iterations), total=len(range_of_iterations)))
@@ -37,7 +40,7 @@ if __name__ == '__main__':
                 #    iteration_measures = run_iteration(graph_function, (c,), random_state=iteration)
 
                 for iteration_measures in iteration_measures_list:
-                    for method in ["template_adj", "template_lap", "spectral", "modularity"]:
+                    for method in ["template_adj", "template_sto", "template_stok", "spectral", "modularity", "modularity_louv"]:
                         for measure in ["ari", "projector_distance", "time"]:
                             experiment_measures[method][measure].append(iteration_measures[method][measure])
 
